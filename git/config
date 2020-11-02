@@ -1,0 +1,7 @@
+[alias]
+  s = status
+  cm = commit -m
+  send = push
+[user]
+	email = hansen.c.eric@gmail.com
+	name = Eric Hansen
