@@ -1,1 +1,0 @@
-echo "Neovim loaded this."
