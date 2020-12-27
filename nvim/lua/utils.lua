@@ -12,4 +12,6 @@ M.is_git = function () return lspconfig.util.root_pattern('.git') end
 
 M.tbl_concat = function (tblin, tblto) for k, v in ipairs(tblin) do tblto[k] = v end end
 
+M.expand = function (str) return core.fn.expand(str) end
+
 return M

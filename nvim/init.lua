@@ -1,5 +1,6 @@
 core = require 'core'
 plugins = require 'plugins'
+utils = require 'utils'
 
 core.cmd 'packadd paq-nvim'
 
@@ -12,6 +13,7 @@ paq {'junegunn/fzf', hook = core.fn['fzf#install']}
 paq {'junegunn/fzf.vim'}
 paq {'ojroques/nvim-lspfuzzy'}
 paq {'nvim-lua/completion-nvim'}
+paq {'numtostr/FTerm.nvim'}
 
 local ts = require 'nvim-treesitter.configs'
 ts.setup {ensure_installed = 'maintained', highlight = {enable = true}}
@@ -21,9 +23,14 @@ local completion_attach = require 'completion'.on_attach
 
 local lspfuzzy = require 'lspfuzzy'
 
+lsp.bashls.setup {}
+
 lsp.intelephense.setup {
-	on_attach = completion_attach
+	on_attach = completion_attach,
+	cmd = {"/usr/local/bin/intelephense", "--stdio"}
 }
+
+lsp.jsonls.setup {}
 
 lsp.sumneko_lua.setup {
 	on_attach = completion_attach,
@@ -42,8 +49,8 @@ lsp.sumneko_lua.setup {
 		  },
 			workspace = {
 				library = {
-					[core.fn.expand('$VIMRUNTIME/lua')] = true,
-					[core.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true
+					[utils.expand('$VIMRUNTIME/lua')] = true,
+					[utils.expand('$VIMRUNTIME/lua/vim/lsp')] = true
 				}
 			}
 	  }
@@ -52,7 +59,7 @@ lsp.sumneko_lua.setup {
 
 lspfuzzy.setup {}  -- Make the LSP client use FZF instead of the quickfix list
 
-paq {'zefei/simple-dark', hook = function() core.cmd 'color simple-dark' end}
+paq {'zefei/simple-dark', hook = function() core.cmd 'color simple-dark'; core.cmd 'syntax on' end}
 
 core.cmd 'color simple-dark'
 core.cmd 'syntax on'
@@ -63,6 +70,8 @@ core.api.nvim_set_keymap('n', '<leader>f', ':Files<cr>', { noremap = true, silen
 core.api.nvim_set_keymap('n', '<leader>lb', ':Buffers<cr>', { noremap = true, silent = true })
 core.api.nvim_set_keymap('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', { noremap = true, expr = true})
 core.api.nvim_set_keymap('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<S-Tab>"', { noremap = true, expr = true})
+core.api.nvim_set_keymap('n', '<A-i>', '<CMD>lua require"FTerm".toggle()<cr>', { noremap = true, silent = true})
+core.api.nvim_set_keymap('t', '<A-i>', '<C-\\><C-n><CMD>lua require"FTerm".toggle()<cr>', { noremap = true, silent = true})
 
 core.o.completeopt = 'menuone,noinsert,noselect'
 core.o.shortmess = vim.o.shortmess .. 'c'
@@ -78,4 +87,4 @@ core.o.autoindent = true
 core.o.shiftwidth = 2
 core.o.softtabstop = 2
 core.o.backup = false
-
+--core.o.signs = true
