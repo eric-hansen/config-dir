@@ -1,17 +1,28 @@
 local M = {};
-local core = require 'core'
 local lspconfig = require 'lspconfig'
 
-M.debug = function (...) if core.debug_enabled == 1 then print(vim.inspect({...})) end end
+M.debug = function (...) print(vim.inspect({...})) end
 
 M.path = function (type)
-  if type == "data" or type ~= nil then return core.fn.stdpath('data') end
+  if type == "data" or type ~= nil then return vim.fn.stdpath('data') end
 end
 
 M.is_git = function () return lspconfig.util.root_pattern('.git') end
 
-M.tbl_concat = function (tblin, tblto) for k, v in ipairs(tblin) do tblto[k] = v end end
+M.tbl_concat = function (tblin, tblto)
+	for k, v in ipairs(tblin) do
+		tblto[k] = v
+	end
+end
 
-M.expand = function (str) return core.fn.expand(str) end
+M.expand = function (str) return vim.fn.expand(str) end
+
+M.require = function (pkg, force_reload)
+  if package.loaded[pkg] and force_reload == true then package.loaded[pkg] = nil end
+
+	return require (pkg)
+end
+
+M.ping = function() M.debug('PONG') end
 
 return M
