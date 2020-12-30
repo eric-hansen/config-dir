@@ -1,4 +1,0 @@
-" set rtp+=/home/erich/.config/nvim/lua/eric-hansen
-" set rtp+=/home/erich/.config/nvim
-
-luafile ~/.config/nvim/loader.lua

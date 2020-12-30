@@ -1,1 +1,0 @@
-pkg {'easymotion/vim-easymotion'}

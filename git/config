@@ -2,6 +2,12 @@
   s = status
   cm = commit -m
   send = push
+  update = pull
+  cam = "!f() { \
+		git add . && git commit -m \"$1\"; \
+	}; f"
+  co = checkout
+  cob = "!f() { git checkout \"$1\" && git pull origin \"$1\" && git checkout -b \"$2\" \"$1\" && git push --set-upstream origin \"$2\"; }; f"
 [user]
 	email = hansen.c.eric@gmail.com
 	name = Eric Hansen

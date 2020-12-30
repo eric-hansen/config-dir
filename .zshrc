@@ -36,4 +36,15 @@ zstyle ':completion:*' verbose true
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
+# Exports
+export XDG_CONFIG_HOME=$HOME/.config
+
+# Aliases
 alias g='git'
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+PATH="$PATH:$HOME/.local/bin"
+alias nvim="$HOME/.local/bin/nvim"
+
+#alias nvim="cd $HOME/Projects/neovim && VIMRUNTIME=runtime ./build/bin/nvim"
