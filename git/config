@@ -2,7 +2,8 @@
   s = status
   cm = commit -m
   send = push
-  update = pull
+  update = "!f() { git pull origin $(git branch --show-current); }; f"
+	cb = "!f() { git branch --show-current; }; f"
   cam = "!f() { \
 		git add . && git commit -m \"$1\"; \
 	}; f"
