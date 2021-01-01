@@ -1,12 +1,11 @@
 [alias]
-  s = status
+  s = status -s
   cm = commit -m
-  send = push
-  update = "!f() { git pull origin $(git branch --show-current); }; f"
-	cb = "!f() { git branch --show-current; }; f"
-  cam = "!f() { \
-		git add . && git commit -m \"$1\"; \
-	}; f"
+  send = push --set-upstream origin "$(git cb)"
+  cb = branch --show-current
+  update = "!f() { git pull --rebase --prune origin \"$(git cb)\"; }; f"
+  cam = commit -a -m
+  l = log --pretty=format:"%C(yellow)%h\\%ad%Cred%d\\%Creset%s%Cblue\\[%cn]" --decorate --date=short --no-merges
   co = checkout
   cob = "!f() { git checkout \"$1\" && git pull origin \"$1\" && git checkout -b \"$2\" \"$1\" && git push --set-upstream origin \"$2\"; }; f"
 [user]
