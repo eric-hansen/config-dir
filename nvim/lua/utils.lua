@@ -1,6 +1,11 @@
 local M = {};
 local lspconfig = require 'lspconfig'
 
+M.json = {
+	encode = function (data) return M.cmd('json_encode ' .. data) end,
+	decode = function (data) return M.cmd('json_decode ' .. data) end
+}
+
 M.debug = function (...) print(vim.inspect({...})) end
 
 M.path = function (type)

@@ -11,21 +11,15 @@ M.cmd = vim.cmd
 M.g = vim.g
 M.o = vim.o
 
-M.keymap = {
-}
-
-setmetatable(M.keymap, {
-	__call = function (_, mode, map, exec, opts)
+M.keymap = function (mode, map, exec, opts)
 		local default_opts = {
 			noremap = true,
 			silent = true
 		}
 
 		utils.tbl_concat(opts or {}, default_opts)
-
 		M.api.nvim_set_keymap(mode, map, exec, default_opts)
 	end
-})
 
 M.theme = function (plugins, theme_name, alias)
 	local regex = '[%w-]+/([%w-_.]+)$'

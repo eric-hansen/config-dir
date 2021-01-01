@@ -1,43 +1,57 @@
 core = require 'core'
+
+core.g.mapleader = " "
+
 utils = require 'utils'
 
 core.cmd 'packadd plugins'
 
 local sumneko_path = vim.fn.expand('$HOME/Projects/lua-language-server')
 
-local paq = require('plugins').plugins
+local plugin = utils.require('plugins', true).plugins
 
-paq {'liuchengxu/vim-which-key'}
+plugin {'liuchengxu/vim-which-key'}
 
-paq {'nvim-treesitter/nvim-treesitter'}
-paq {'neovim/nvim-lspconfig', hooks = {
+plugin {'nvim-treesitter/nvim-treesitter'}
+plugin {'neovim/nvim-lspconfig', hooks = {
+	install = function()
+		core.cmd('LspInstall tsserver<cr>')
+		core.cmd('LspInstall sumneko<cr>')
+	end,
 	init = function()
-		core.keymap('n', '<leader>lh', ':lua vim.lsp.buf.hover()<cr>')
-		core.keymap('n', '<leader>ld', ':lua vim.lsp.buf.decleration()<cr>')
+		core.keymap('n', '<leader>lh',  ':lua vim.lsp.buf.hover()<cr>')
 		core.keymap('n', '<leader>lde', ':lua vim.lsp.buf.definition()<cr>')
-		core.keymap('n', '<leader>li', ':lua vim.lsp.buf.implementation()<cr>')
-		core.keymap('n', '<leader>ls', ':lua vim.lsp.buf.signature_help()<cr>')
-		core.keymap('n', '<leader>td', ':lua vim.lsp.buf.type_definition()<cr>')
-		core.keymap('n', '<leader>lr', ':lua vim.lsp.buf.references()<cr>')
-		core.keymap('n', '<leader>lR', ':lua vim.lsp.buf.rename()<cr>')
+		core.keymap('n', '<leader>li',  ':lua vim.lsp.buf.implementation()<cr>')
+		core.keymap('n', '<leader>lsh', ':lua vim.lsp.buf.signature_help()<cr>')
+		core.keymap('n', '<leader>lsd', ':lua vim.lsp.buf.document_symbol()<cr>')
+		core.keymap('n', '<leader>lsw', ':lua vim.lsp.buf.workspace_symbol()<cr>')
+		core.keymap('n', '<leader>ltd', ':lua vim.lsp.buf.type_definition()<cr>')
+		core.keymap('n', '<leader>lr',  ':lua vim.lsp.buf.references()<cr>')
+		core.keymap('n', '<leader>lR',  ':lua vim.lsp.buf.rename()<cr>')
 
-		core.cmd 'setlocal omnifunc=v:lua.vim.lsp.omnifunc'
+		core.cmd 'set omnifunc=v:lua.vim.lsp.omnifunc'
 	end
 }}
-paq {'junegunn/fzf', hooks = { install = core.fn['fzf#install']}}
-paq {'junegunn/fzf.vim'}
-paq {'ojroques/nvim-lspfuzzy'}
-paq {'nvim-lua/completion-nvim'}
-paq {'numtostr/FTerm.nvim'}
+plugin {'junegunn/fzf', hooks = { install = core.fn['fzf#install']}}
+plugin {'junegunn/fzf.vim'}
+plugin {'ojroques/nvim-lspfuzzy'}
+plugin {'nvim-lua/completion-nvim'}
+plugin {'numtostr/FTerm.nvim'}
+
+plugin {'nvim-lua/lsp-status.nvim', hooks = {
+	init = function()
+
+	end
+}}
 
 --core.theme(paq, 'zefei/simple-dark', 'simple-dark')
-core.theme(paq, 'sts10/vim-pink-moon', 'pink-moon')
+core.theme(plugin, 'sts10/vim-pink-moon', 'pink-moon')
 
-paq {'liuchengxu/vista.vim', hooks = {
+plugin {'liuchengxu/vista.vim', hooks = {
 	init = function ()
 		core.g.vista_default_executive = 'nvim_lsp' -- neovim-lspconfig
-		--core.keymap('n', '<leader>tb', ':Vista!!<cr>')
-		core.api.nvim_set_keymap('n', '<leader>tb', ':Vista!!<cr>', {noremap = true, silent = true})
+		core.keymap('n', '<leader>tb', ':Vista!!<cr>')
+		--core.api.nvim_set_keymap('n', '<leader>tb', ':Vista!!<cr>', {noremap = true, silent = true})
 	end
 	}
 }
@@ -46,21 +60,29 @@ local ts = require 'nvim-treesitter.configs'
 ts.setup {highlight = {enable = true}}
 
 local lsp = require 'lspconfig'
-local completion_attach = require 'completion'.on_attach
+local on_attach = function()
+	require 'completion'.on_attach()
+end
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+	vim.lsp.diagnostic.on_publish_diagnostics, {
+		signs = true
+	}
+)
 
 local lspfuzzy = require 'lspfuzzy'
 
 lsp.bashls.setup {}
 
 lsp.intelephense.setup {
-	on_attach = completion_attach,
+	on_attach = on_attach,
 	cmd = {"/usr/local/bin/intelephense", "--stdio"}
 }
 
 lsp.jsonls.setup {}
 
 lsp.sumneko_lua.setup {
-	on_attach = completion_attach,
+	on_attach = on_attach,
   cmd = {sumneko_path .. "/bin/Linux/lua-language-server", "-E", sumneko_path .. "/main.lua"};
   settings = {
 	  Lua = {
@@ -85,8 +107,6 @@ lsp.sumneko_lua.setup {
 }
 
 lspfuzzy.setup {}  -- Make the LSP client use FZF instead of the quickfix list
-
-core.g.mapleader = " "
 
 core.api.nvim_set_keymap('n', '<leader>f', ':Files<cr>', { noremap = true, silent = true })
 core.api.nvim_set_keymap('n', '<leader>lb', ':Buffers<cr>', { noremap = true, silent = true })
