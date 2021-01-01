@@ -1,7 +1,7 @@
 [alias]
   s = status -s
   cm = commit -m
-  send = push --set-upstream origin "$(git cb)"
+  send = "!f() { git push --set-upstream origin \"$(git cb)\"; };f"
   cb = branch --show-current
   update = "!f() { git pull --rebase --prune origin \"$(git cb)\"; }; f"
   cam = commit -a -m
