@@ -22,7 +22,7 @@ end
 local function msg (action, args, success)
   local status_show = success and 'Plugin: ' or 'Plugin: Failed to '
 
-  print (status_show .. action .. ' ' .. args)
+  print (status_show .. action .. ' ' .. vim.inspect(args))
 end
 
 local function exec_hook (hook, name, dir)
@@ -68,6 +68,10 @@ local function install (name, dir, isdir, args)
 
 end
 
+local function remove (name, dir, is_installed, plugin_args)
+	exec_cmd ('rm', name, dir, 'remove', {'-rf', plugin_dir(name)}, plugin_args.hooks.remove)
+end
+
 local function update (name, dir, isdir, args)
 	if isdir then exec_cmd('git', name, dir, 'update', {'pull'}, args.hooks.update) end
 end
@@ -84,10 +88,11 @@ local function is_installed (plugin)
 	if core.fn.isdirectory(dir) ~= 0 then return true else return nil end
 end
 
-local function mapper (cb)
+local function mapper (cb, name)
 	local installed
+	local plugin_feed = name and plugins[name] or plugins
 
-	for plugin, args in pairs(plugins) do
+	for plugin, args in pairs(plugin_feed) do
 		installed = is_installed(plugin)
 		cb(plugin, plugin_dir(plugin), installed, args)
 	end
@@ -98,19 +103,32 @@ local function _plugins (args)
 
 	local repo =	args[1]:match(regexes.repo)
 
+	local _hooks = {
+		init = function() end,
+		install = function() end,
+		update = function() end,
+		remove = function() end
+	}
+
 	plugins[repo] = {
 		branch = args.branch,
 		loader = args.loader,
-		hooks = args.hooks or {install = function() end, update = function() end, init = function() end},
+		hooks = args['hooks'] ~= nil and args.hooks or {},
 		opt = args.opt,
 		url = args.url or sources.github .. args[1] .. '.git',
 	}
 
-	if is_installed(repo) then plugins[repo].hooks.init(plugins[repo]) end
+	for _type, func in pairs(_hooks) do if plugins[repo].hooks[_type] == nil then plugins[repo].hooks[_type] = func end end
+
+	local deps = args.deps or {}
+
+	for _, plugin in ipairs(deps) do _plugins (plugin) end
+	plugins[repo].hooks.init(plugins[repo])
 end
 
 return {
 	install = function () mapper(install) end,
 	update = function () mapper(update) end,
+	remove = function (name) mapper(remove, name) end,
 	plugins = _plugins,
 }
