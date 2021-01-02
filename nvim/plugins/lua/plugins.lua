@@ -126,9 +126,19 @@ local function _plugins (args)
 	plugins[repo].hooks.init(plugins[repo])
 end
 
+local function reload(plugin)
+	local plugin_directory = {}
+
+	if plugin ~= nil then plugin_directory[plugin] = plugins[plugin] else plugin_directory = plugins end
+
+	for p, _ in pairs(plugin_directory) do package[p].loaded = nil; _plugins(p); pcall(require, p) end
+end
+
 return {
 	install = function () mapper(install) end,
 	update = function () mapper(update) end,
 	remove = function (name) mapper(remove, name) end,
+	reload_all = function () reload() end,
+	reload = function (name) mapper(reload, name) end,
 	plugins = _plugins,
 }
