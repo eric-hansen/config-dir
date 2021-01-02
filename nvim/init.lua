@@ -117,9 +117,13 @@ lsp.sumneko_lua.setup {
 
 lspfuzzy.setup {}  -- Make the LSP client use FZF instead of the quickfix list
 
-core.api.nvim_set_keymap('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', { noremap = true, expr = true})
-core.api.nvim_set_keymap('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<S-Tab>"', { noremap = true, expr = true})
-core.api.nvim_set_keymap('n', '<leader>gs', ':Gstatus<cr>', {noremap = true, silent = true})
+--  Global keymaps that don't fit anywhere
+core.keymap('n', '<leader>pr', ':lua require"plugins".reload_all()<cr>')
+core.keymap('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"')
+core.keymap('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<S-Tab>"')
+
+-- Yet to be handled keymaps
+core.keymap('n', '<leader>gs', ':GStatus<cr>')
 
 core.o.completeopt = 'menuone,noinsert,noselect'
 core.o.shortmess = vim.o.shortmess .. 'c'
