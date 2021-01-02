@@ -29,14 +29,24 @@ plugin {'neovim/nvim-lspconfig', hooks = {
 		core.keymap('n', '<leader>lr',  ':lua vim.lsp.buf.references()<cr>')
 		core.keymap('n', '<leader>lR',  ':lua vim.lsp.buf.rename()<cr>')
 
-		core.cmd 'set omnifunc=v:lua.vim.lsp.omnifunc'
+--		core.cmd 'set omnifunc=v:lua.vim.lsp.omnifunc'
 	end
 }}
 plugin {'junegunn/fzf', hooks = { install = core.fn['fzf#install']}}
-plugin {'junegunn/fzf.vim'}
+plugin {'junegunn/fzf.vim', hooks = {
+	init = function()
+		core.api.nvim_set_keymap('n', '<leader>f', ':Files<cr>', { noremap = true, silent = true })
+		core.api.nvim_set_keymap('n', '<leader>lb', ':Buffers<cr>', { noremap = true, silent = true })
+	end
+}}
 plugin {'ojroques/nvim-lspfuzzy'}
 plugin {'nvim-lua/completion-nvim'}
-plugin {'numtostr/FTerm.nvim'}
+plugin {'numtostr/FTerm.nvim', hooks = {
+	init = function()
+		core.api.nvim_set_keymap('n', '<A-i>', '<CMD>lua require"FTerm".toggle()<cr>', { noremap = true, silent = true})
+		core.api.nvim_set_keymap('t', '<A-i>', '<C-\\><C-n><CMD>lua require"FTerm".toggle()<cr>', { noremap = true, silent = true})
+	end
+}}
 
 plugin {'nvim-lua/lsp-status.nvim', hooks = {
 	init = function()
@@ -44,14 +54,13 @@ plugin {'nvim-lua/lsp-status.nvim', hooks = {
 	end
 }}
 
---core.theme(paq, 'zefei/simple-dark', 'simple-dark')
+--core.theme(paq, 'zefei/simple-dark')
 core.theme(plugin, 'sts10/vim-pink-moon', 'pink-moon')
 
 plugin {'liuchengxu/vista.vim', hooks = {
 	init = function ()
 		core.g.vista_default_executive = 'nvim_lsp' -- neovim-lspconfig
 		core.keymap('n', '<leader>tb', ':Vista!!<cr>')
-		--core.api.nvim_set_keymap('n', '<leader>tb', ':Vista!!<cr>', {noremap = true, silent = true})
 	end
 	}
 }
@@ -108,12 +117,8 @@ lsp.sumneko_lua.setup {
 
 lspfuzzy.setup {}  -- Make the LSP client use FZF instead of the quickfix list
 
-core.api.nvim_set_keymap('n', '<leader>f', ':Files<cr>', { noremap = true, silent = true })
-core.api.nvim_set_keymap('n', '<leader>lb', ':Buffers<cr>', { noremap = true, silent = true })
 core.api.nvim_set_keymap('i', '<Tab>', 'pumvisible() ? "\\<C-n>" : "\\<Tab>"', { noremap = true, expr = true})
 core.api.nvim_set_keymap('i', '<S-Tab>', 'pumvisible() ? "\\<C-p>" : "\\<S-Tab>"', { noremap = true, expr = true})
-core.api.nvim_set_keymap('n', '<A-i>', '<CMD>lua require"FTerm".toggle()<cr>', { noremap = true, silent = true})
-core.api.nvim_set_keymap('t', '<A-i>', '<C-\\><C-n><CMD>lua require"FTerm".toggle()<cr>', { noremap = true, silent = true})
 core.api.nvim_set_keymap('n', '<leader>gs', ':Gstatus<cr>', {noremap = true, silent = true})
 
 core.o.completeopt = 'menuone,noinsert,noselect'
