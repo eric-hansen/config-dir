@@ -2,6 +2,10 @@
 
 My .config directory of manifestos.
 
+### Installation
+
+Run `sh doinstall.sh`.  Everything that can be installed automagically will (as long as there's an `install.sh` script found in a folder).
+
 ### nvim
 
 I use Neovim primarily, and love it.  I also use Neovim head (0.5.0 as of this writing) for the native Lua support.
