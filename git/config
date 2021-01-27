@@ -1,8 +1,11 @@
 [alias]
+  a = add --all
   s = status -s
+  c = commit
   cm = commit -m
+  v = "!f() { git --version | awk '{print $3}' | awk -F. '{print $1}'; };f"
   send = "!f() { git push --set-upstream origin \"$(git cb)\"; };f"
-  cb = branch --show-current
+  cb = "!f() { VER=$(git v); if [ \"$VER\" != \"2\" ]; then git rev-parse --abbrev-ref HEAD; else git branch --show-current; fi; };f"
   update = "!f() { git pull --rebase --prune origin \"$(git cb)\"; }; f"
   cam = commit -a -m
   l = log --pretty=format:"%C(yellow)%h\\%ad%Cred%d\\%Creset%s%Cblue\\[%cn]" --decorate --date=short --no-merges
